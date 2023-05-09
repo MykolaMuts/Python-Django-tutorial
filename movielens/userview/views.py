@@ -8,6 +8,10 @@ from django.views import generic
 class IndexView(generic.ListView):
     template_name = 'userview/index.html'
     context_object_name = 'movies'
+    paginate_by = 5
+
+    def get_queryset(self):
+        return Movie.objects.order_by('-title')
 
 
 def get_queryset(self):
