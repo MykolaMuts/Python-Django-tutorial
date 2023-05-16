@@ -1,28 +1,56 @@
+{% extends "userview/base.html" %}
+{% block content %}
+
 {% if movies %}
-    <ul>
-        {% for movie in movies %}
-            <li><a href="/movie/{{ movie.id }}">{{ movie.title }}</a></li>
-        {% endfor %}
-    </ul>
+<div class="container">
+    <div class="row justify-content-center align-items-center g-2">
 
-    <div class="pagination">
-        <span class="step-links">
-            {% if movies.has_previous %}
-                <a href="?page=1">&laquo; first</a>
-                <a href="?page={{ movies.previous_page_number }}">&lsaquo; previous</a>
-            {% endif %}
+        <div class="col-12">
 
-            <span class="current-page">
-                Page {{ movies.number }} of {{ movies.paginator.num_pages }}.
-            </span>
-
-            {% if movies.has_next %}
-                <a href="?page={{ movies.next_page_number }}">next &rsaquo;</a>
-                <a href="?page={{ movies.paginator.num_pages }}">last &raquo;</a>
-            {% endif %}
-        </span>
+            <h1>Movies</h1>
+            <div class="table-responsive">
+                <table class="table table-primary">
+                    <thead>
+                        <tr>
+                            <th scope="col">Name</th>
+                            <th scope="col">Genre</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for movie in movies %}
+                        <tr class="">
+                            <td scope="row"><a href="movie/{{ movie.pk }}">{{ movie.title }}</a></td>
+                            <td>
+                                {% for genre in movie.genres.all %}
+                                <a href="genre/{{ genre.pk }}" class="badge bg-success">{{ genre }}</a>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
     </div>
+</div>
 
+<div class="pagination">
+    <span class="step-links">
+        {% if movies.has_previous %}
+        <a href="?page=1">&laquo; first</a>
+        <a href="?page={{ movies.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current-page">{{ movies.number }}</span>
+
+        {% if movies.has_next %}
+        <a href="?page={{ movies.next_page_number }}">next</a>
+        <a href="?page={{ movies.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
 {% else %}
-    <p>No movies are available.</p>
+<p>No movies are available.</p>
 {% endif %}
+
+{% endblock %}
