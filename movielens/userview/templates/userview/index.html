@@ -1,81 +1,118 @@
-{% extends "userview/base.html" %}
-{% block content %}
-
-{% if movies %}
-<div class="container">
-    <div class="row justify-content-center align-items-center g-2">
-
-        <div class="col-12">
-
-            <h1>Movies</h1>
-            <div class="table-responsive">
-                <table class="table table-primary">
-                    <thead>
-                    <tr>
-                        <th scope="col">Name</th>
-                        <th scope="col">Genre</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% for movie in movies %}
-                    <tr class="">
-                        <td scope="row"><a href="movie/{{ movie.pk }}">{{ movie.title }}</a></td>
-                        <td>
-                            {% for genre in movie.genres.all %}
-                            <a href="genre/{{ genre.pk }}" class="badge bg-success">{{ genre }}</a>
-                            {% endfor %}
-                        </td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    {% load django_bootstrap5 %} {% bootstrap_css %} {% bootstrap_javascript %}
+  </head>
+  <body>
+    {% if user.is_authenticated %}
+    <div class="p-4">
+      <h1>Movies List:</h1>
+      <div class="list-group">
+        {% if movies %} {% for movie in page_obj %}
+        <a
+          class="list-group-item list-group-item-action"
+          href="/movie/{{movie.id}}"
+          >{{ movie.title }}</a
+        >
+        {% endfor %} {% else %}
+        <p>No movies are available.</p>
+        {% endif %} {% block content %} {% endblock %}
+      </div>
+      {% include 'userview/paginator.html' %} <!-- Include the paginator.html file -->
     </div>
-
-<div class="pagination">
-    <span class="step-links">
-        {% if movies.has_previous %}
-        <a href="?page=1">&laquo; first</a>
-        <a href="?page={{ movies.previous_page_number }}">previous</a>
-        {% endif %}
-
-        <span class="current-page">{{ movies.number }}</span>
-
-        {% if movies.has_next %}
-        <a href="?page={{ movies.next_page_number }}">next</a>
-        <a href="?page={{ movies.paginator.num_pages }}">last &raquo;</a>
-        {% endif %}
-    </span>
-</div>
-{% else %}
-<p>No movies are available.</p>
-{% endif %}
-
-
-    <div class="row justify-content-center align-items-center g-2">
-        <div class="col d-flex justify-content-center">
-        <nav aria-label="Page navigation">
-            <ul class="pagination">
-                <li class="page-item {% if not movies.has_previous %} disabled {% endif %}">
-
-                    <a class="page-link" href="?page={% if movies.has_previous %}{{movies.previous_page_number}}{% endif %}" aria-label="Previous">
-                        <span aria-hidden="true">&laquo;</span>
-                        <span class="sr-only">Previous</span>
-                    </a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#"></a></li>
-                <li class="page-item"><a class="page-link" href="#"></a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#" aria-label="Next">
-                        <span aria-hidden="true">&raquo;</span>
-                        <span class="sr-only">Next</span>
-                    </a>
-                </li>
+<!--      <div>-->
+<!--        <span>-->
+<!--          {% if page_obj.has_previous %}-->
+<!--          <a-->
+<!--            style="text-decoration: none"-->
+<!--            href="?page={{ page_obj.previous_page_number }}"-->
+<!--            >←</a-->
+<!--          >-->
+<!--          {% endif %}-->
+<!--          <span>-->
+<!--            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.-->
+<!--          </span>-->
+<!--          {% if page_obj.has_next %}-->
+<!--          <a-->
+<!--            style="text-decoration: none"-->
+<!--            href="?page={{ page_obj.next_page_number }}"-->
+<!--            >→</a-->
+<!--          >-->
+<!--          {% endif %}-->
+<!--        </span>-->
+<!--      </div>-->
+<!--    </div>-->
+    <div class="p-4">
+      {% if ratings %} {% for rating in ratings.all %}
+      <li class="list-group-item list-group-item-action">
+        Movie: {{ rating.movie }}, Rating: {{ rating.value }}, User: {{
+        rating.user }}
+      </li>
+      {% endfor %} {% else %}
+      <p>No ratins yet</p>
+      {% endif %}
+      <a style="text-decoration: none" href="/rating">Add rating</a>
+    </div>
+    <div class="p-4">
+      <h3>Logged as {{request.user}}</h3>
+      <a href="/logout">Logout</a>
+    </div>
+    {% else %}
+    <div class="container py-5">
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="/">Movie Lens</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="#">Home</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="#">Search</a>
+              </li>
             </ul>
-        </nav>
+            <form class="d-flex">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+                  <a
+                    class="nav-link dropdown-toggle"
+                    href="#"
+                    id="navbarDropdown"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+                  >
+                    Login or Register
+                  </a>
+                  <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <li><a class="dropdown-item" href="/login">Login</a></li>
+                    <li>
+                      <a class="dropdown-item" href="/register">Register</a>
+                    </li>
+                  </ul>
+                </li>
+              </ul>
+            </form>
+          </div>
+        </div>
+      </nav>
+      <h2>
+        Welcome to Movie Land application. To get access to content
+        <a href="/register">register</a> or <a href="/login">login</a>
+      </h2>
     </div>
-</div>
-</div>
-
-{% endblock %}
+    {% endif %}
+  </body>
+</html>

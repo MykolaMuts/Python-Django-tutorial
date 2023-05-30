@@ -1,0 +1,22 @@
+<!-- paginator.html -->
+      <div>
+        <span>
+          {% if page_obj.has_previous %}
+          <a
+            style="text-decoration: none"
+            href="?page={{ page_obj.previous_page_number }}"
+            >←</a
+          >
+          {% endif %}
+          <span>
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+          </span>
+          {% if page_obj.has_next %}
+          <a
+            style="text-decoration: none"
+            href="?page={{ page_obj.next_page_number }}"
+            >→</a
+          >
+          {% endif %}
+        </span>
+      </div>
