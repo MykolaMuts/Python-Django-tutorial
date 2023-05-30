@@ -1,0 +1,26 @@
+{% extends "userview/base.html" %}
+
+{% block content %}
+    <h2>Movies Rated by You</h2>
+    {% if movies_rated_by_user %}
+        <ul>
+            {% for movie in movies_rated_by_user %}
+                <li>{{ movie.title }} - {{ movie.rating }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>No movies rated yet.</p>
+    {% endif %}
+
+    <h2>Add Rating</h2>
+    {% for movie in movies %}
+    <h3>{{ movie.title }}</h3>
+    {% if user.is_authenticated %}
+        {% if movie.rating %}
+            <p>Your rating: {{ movie.rating }}</p>
+        {% else %}
+            <a href="{% url 'userview:rate_movie' movie.id %}">Rate this movie</a>
+        {% endif %}
+    {% endif %}
+{% endfor %}
+{% endblock %}
